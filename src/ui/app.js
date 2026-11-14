@@ -7,6 +7,7 @@ import {
   isGameOver,
   validateAction,
 } from '../engine/index.js';
+import { createFx } from './fx.js';
 import { renderGame, renderSetup } from './render.js';
 
 const DEFAULT_CONFIG = {
@@ -20,13 +21,16 @@ const DEFAULT_CONFIG = {
  * Contrôleur de l'interface : garde l'état de jeu (immuable) et l'état
  * d'interface (sélection, message), et redessine à chaque changement.
  */
-export function createApp(root, { aiDelay = 700 } = {}) {
+export function createApp(root, { aiDelay = 700, fx = createFx() } = {}) {
   const store = {
     config: structuredClone(DEFAULT_CONFIG),
     game: null,
     ui: emptyUi(),
   };
   let aiTimer = null;
+  /** Transition à animer au prochain rendu : { prev, next, action } ou 'intro'. */
+  let pending = null;
+  let screen = null;
 
   function emptyUi(message = null) {
     return { selection: [], selectedCard: null, selectedDeck: null, message };
@@ -38,11 +42,37 @@ export function createApp(root, { aiDelay = 700 } = {}) {
 
   function render() {
     const focused = document.activeElement?.dataset?.testid;
+    const snap = fx.snapshot(root);
+    const scrollLeft = root.querySelector('.players__list')?.scrollLeft ?? 0;
     root.innerHTML = store.game
       ? renderGame(store.game, store.ui, getLegalActions(store.game))
       : renderSetup(store.config);
-    if (focused) root.querySelector(`[data-testid="${CSS.escape(focused)}"]`)?.focus();
+    const list = root.querySelector('.players__list');
+    if (list) list.scrollLeft = scrollLeft;
+    if (focused) root.querySelector(`[data-testid="${CSS.escape(focused)}"]`)?.focus({ preventScroll: true });
+    announceScreen();
+    const transition = pending;
+    pending = null;
+    if (transition === 'intro') {
+      fx.intro(root, store.game);
+      fx.revealPanel(root, store.game.current);
+    } else if (transition) {
+      fx.transition(root, snap, transition);
+      if (isGameOver(transition.next)) {
+        fx.victory(root);
+        window.dispatchEvent(new CustomEvent('splendor:victory'));
+      }
+    }
     scheduleAi();
+  }
+
+  /** Prévient le décor 3D de l'écran affiché (accueil ou partie). */
+  function announceScreen() {
+    const mode = store.game ? 'game' : 'setup';
+    if (mode === screen) return;
+    screen = mode;
+    document.documentElement.dataset.screen = mode;
+    window.dispatchEvent(new CustomEvent('splendor:screen', { detail: { mode } }));
   }
 
   function setMessage(type, text) {
@@ -64,6 +94,7 @@ export function createApp(root, { aiDelay = 700 } = {}) {
     store.game = applyAction(store.game, action);
     const last = store.game.log.at(-1);
     store.ui = emptyUi(last ? { type: 'info', text: `${prev.players[last.player].name} ${last.text}.` } : null);
+    pending = { prev, next: store.game, action };
     render();
     return true;
   }
@@ -89,6 +120,7 @@ export function createApp(root, { aiDelay = 700 } = {}) {
       ai: ai.slice(0, numPlayers),
     });
     store.ui = emptyUi({ type: 'info', text: `Nouvelle partie (graine ${store.config.lastSeed}). À ${store.game.players[0].name} de commencer.` });
+    pending = 'intro';
     render();
     root.querySelector('[data-testid="current-player"]')?.focus?.();
   }
@@ -189,6 +221,8 @@ export function createApp(root, { aiDelay = 700 } = {}) {
       play(store.ui.selectedCard ? { type: 'reserve', cardId: store.ui.selectedCard } : { type: 'reserve', level: store.ui.selectedDeck });
     }
   });
+
+  fx.attachTilt(root);
 
   root.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && store.game) clearSelection();

@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   base: './',
+  // Le décor 3D (Three.js) est un chunk chargé à la demande.
+  build: { chunkSizeWarningLimit: 700 },
   test: {
     include: ['tests/unit/**/*.test.js', 'tests/integration/**/*.test.js'],
     environment: 'node',

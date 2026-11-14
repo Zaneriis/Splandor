@@ -201,3 +201,26 @@ test('navigation au clavier', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('selection')).toHaveCount(0);
 });
+
+test.describe('mobile', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test('le plateau tient dans la largeur et reste jouable', async ({ page }) => {
+    await startGame(page);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+    await expect(page.locator('[data-testid^="market-"] .card')).toHaveCount(12);
+    await page.getByTestId('bank-token-white').tap();
+    await page.getByTestId('bank-token-blue').tap();
+    await page.getByTestId('bank-token-green').tap();
+    await expect(page.getByTestId('confirm-take')).toBeInViewport();
+    await page.getByTestId('confirm-take').tap();
+    await expect(page.getByTestId('player-tokens-0-white')).toHaveText('1');
+  });
+});
+
+test('?fx=0 désactive le décor 3D', async ({ page }) => {
+  await page.goto('/?fx=0');
+  await expect(page.getByTestId('setup-screen')).toBeVisible();
+  await expect(page.locator('canvas.scene3d')).toHaveCount(0);
+});

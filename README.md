@@ -4,7 +4,21 @@ Adaptation web **non officielle** et jouable du jeu de société *Splendor*, en 
 (modules ES). 2 à 4 joueurs en local (hot-seat), avec une IA simple pour jouer contre l'ordinateur.
 
 > Projet de fan, sans affiliation avec l'éditeur. Aucune image ni logo officiel : le design (gemmes, cartes,
-> nobles) est entièrement réalisé en CSS.
+> nobles, décor 3D) est entièrement original, en CSS, SVG et Three.js.
+
+## Direction artistique
+
+L'univers est celui d'une guilde de marchands de la Renaissance : velours nocturne, filets d'or et parchemin.
+Les trois niveaux de cartes racontent la chaîne du joyau — **I. Mines**, **II. Routes marchandes**,
+**III. Joailleries** — chacun avec son illustration au trait ; les nobles portent des titres fictifs.
+
+- **3D** : décor Three.js (gemmes taillées flottantes, poussière d'or, parallaxe à la souris), chargé à part,
+  plus discret pendant la partie, qui s'emballe à la victoire. Cartes et nobles s'inclinent en 3D au survol.
+- **Motion design** : distribution des cartes, jetons et cartes qui volent jusqu'au joueur, paiements qui
+  retournent à la réserve, visite des nobles, gerbes de gemmes, écran de victoire.
+- **Mobile** : plateau sur 5 colonnes ajusté à la largeur, barre d'action collée en bas de l'écran, joueurs en
+  carrousel horizontal.
+- Respecte `prefers-reduced-motion`. `?fx=0` coupe le décor 3D et les animations.
 
 ## Installation
 
@@ -22,7 +36,7 @@ npm run build      # build de production dans dist/
 npm run preview    # sert le build de production
 ```
 
-Options d'URL : `?aiDelay=0` fait jouer l'IA sans délai (700 ms par défaut).
+Options d'URL : `?aiDelay=0` fait jouer l'IA sans délai (700 ms par défaut), `?fx=0` désactive 3D et animations.
 
 ## Tester
 
@@ -71,7 +85,8 @@ src/
     game.js     createGame, getLegalActions, applyAction, validateAction, isGameOver, getWinner…
     ai.js       chooseAiAction : IA gloutonne
     rng.js      générateur pseudo-aléatoire à graine (mulberry32) + mélange
-  ui/         rendu DOM (render.js) et contrôleur / gestion des clics (app.js)
+  ui/         rendu DOM (render.js), contrôleur (app.js), animations (fx.js),
+              sprite SVG gemmes/illustrations (sprite.js), décor Three.js (scene3d.js)
   main.js     point d'entrée
 tests/
   unit/        règles, cas limites, données, IA
