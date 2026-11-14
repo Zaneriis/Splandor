@@ -357,7 +357,11 @@ export function renderGame(game, ui, legal) {
     <header class="topbar">
       <h1 class="title title--small">Splendor <span class="title__sub">Web</span></h1>
       <p class="turn" data-testid="current-player" aria-live="polite">
-        Manche ${game.round} — au tour de <strong>${escapeHtml(player.name)}</strong>${player.ai && !over ? ' (réfléchit…)' : ''}
+        ${
+          over
+            ? `Partie terminée après ${game.round} manche${game.round > 1 ? 's' : ''}`
+            : `Manche ${game.round} — au tour de <strong>${escapeHtml(player.name)}</strong>${player.ai ? ' (réfléchit…)' : ''}`
+        }
       </p>
       ${game.finalRound && !over ? `<p class="final-round" data-testid="final-round">Dernière manche !</p>` : ''}
       <button type="button" class="btn btn--ghost" data-action="quit" data-testid="quit">Quitter</button>
