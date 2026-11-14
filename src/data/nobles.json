@@ -1,0 +1,12 @@
+[
+  {"id": "N1", "points": 3, "requirement": {"white": 3, "blue": 3, "black": 3}},
+  {"id": "N2", "points": 3, "requirement": {"green": 3, "red": 3, "black": 3}},
+  {"id": "N3", "points": 3, "requirement": {"blue": 3, "green": 3, "red": 3}},
+  {"id": "N4", "points": 3, "requirement": {"white": 3, "red": 3, "black": 3}},
+  {"id": "N5", "points": 3, "requirement": {"white": 3, "blue": 3, "green": 3}},
+  {"id": "N6", "points": 3, "requirement": {"blue": 4, "green": 4}},
+  {"id": "N7", "points": 3, "requirement": {"white": 4, "blue": 4}},
+  {"id": "N8", "points": 3, "requirement": {"red": 4, "black": 4}},
+  {"id": "N9", "points": 3, "requirement": {"green": 4, "red": 4}},
+  {"id": "N10", "points": 3, "requirement": {"white": 4, "black": 4}}
+]
