@@ -9,11 +9,13 @@
   --danger: #ff8a80;
   --ok: #8fe3a6;
 
-  --white: #f3efe6;
+  --white: #ffffff; /* diamant : fond blanc, texte noir */
+  --white-text: #000000;
   --blue: #2a62c0;
   --green: #17804a;
   --red: #c62f2f;
-  --black: #2a2a2e;
+  --black: #000000; /* onyx : fond noir, texte blanc */
+  --black-text: #ffffff;
   --gold: #e3b53c;
 
   --radius: 10px;
@@ -369,7 +371,11 @@ kbd {
   min-height: 34%;
 }
 .card--white .card__head {
-  background: linear-gradient(135deg, #ffffff, #d9d4c7);
+  background: var(--white);
+  border-bottom: 2px solid #000;
+}
+.card--white .card__points {
+  color: var(--white-text);
 }
 .card--blue .card__head {
   background: linear-gradient(135deg, #4d84dd, var(--blue));
@@ -381,7 +387,10 @@ kbd {
   background: linear-gradient(135deg, #e25555, var(--red));
 }
 .card--black .card__head {
-  background: linear-gradient(135deg, #4a4a52, var(--black));
+  background: var(--black);
+}
+.card--black .gem--bonus {
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff);
 }
 .card--blue .card__points,
 .card--green .card__points,
@@ -449,7 +458,8 @@ kbd {
 .mini--white,
 .req--white {
   --c: var(--white);
-  --t: #1a1a1a;
+  --t: var(--white-text);
+  border-color: #000 !important;
 }
 .gem--blue,
 .cost--blue,
@@ -477,7 +487,12 @@ kbd {
 .mini--black,
 .req--black {
   --c: var(--black);
-  --t: #fff;
+  --t: var(--black-text);
+  border-color: #fff !important;
+}
+.cost--black {
+  /* sur le fond crème des cartes, le cercle noir se voit sans liseré blanc */
+  border-color: #000 !important;
 }
 .gem--gold,
 .mini--gold {
@@ -547,7 +562,8 @@ kbd {
 }
 .token--white {
   --c: var(--white);
-  color: #1a1a1a;
+  color: var(--white-text);
+  border-color: #000;
 }
 .token--blue {
   --c: var(--blue);
@@ -560,7 +576,8 @@ kbd {
 }
 .token--black {
   --c: var(--black);
-  border-color: #777;
+  color: var(--black-text);
+  border-color: #fff;
 }
 .token--gold {
   --c: var(--gold);
@@ -703,9 +720,7 @@ button.token:disabled {
 .mini--bonus {
   border-radius: 4px;
 }
-.mini--black {
-  border-color: #888;
-}
+
 .player__reserved {
   margin-top: 6px;
 }
